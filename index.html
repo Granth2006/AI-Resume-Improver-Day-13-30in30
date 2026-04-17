@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Improver</title>
+    <meta name="description" content="Transform your resume into a powerful career tool with AI-powered analysis and actionable feedback.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Landing Page -->
+        <div id="landing-page" class="page active">
+            <div class="container">
+                <header class="app-header">
+                    <div class="header-inner">
+                        <div class="brand">
+                            <div class="brand-icon">📄</div>
+                            <span class="brand-name">Resume Improver</span>
+                        </div>
+                    </div>
+                </header>
+                
+                <main class="hero">
+                    <h1 class="hero-title">Improve Your Resume with AI in Seconds</h1>
+                    <p class="hero-subtitle">Get actionable feedback, rewrite weak bullet points, and optimize for ATS — all powered by AI</p>
+                    
+                    <div class="hero-cta">
+                        <button class="btn btn-primary" onclick="showUploadPage()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            Upload / Paste Resume
+                        </button>
+                    </div>
+                    
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <h3 class="feature-title">Overall Score</h3>
+                            <p class="feature-desc">Get a comprehensive score out of 100 with detailed breakdown</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">✨</div>
+                            <h3 class="feature-title">Smart Rewrites</h3>
+                            <p class="feature-desc">AI-powered bullet point improvements with action verbs</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🎯</div>
+                            <h3 class="feature-title">ATS Optimized</h3>
+                            <p class="feature-desc">Missing keywords identification for better matching</p>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- Upload Page -->
+        <div id="upload-page" class="page">
+            <div class="container">
+                <header class="app-header">
+                    <div class="header-inner">
+                        <button class="btn btn-back" onclick="showLandingPage()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="19" y1="12" x2="5" y2="12"/>
+                                <polyline points="12 19 5 12 12 5"/>
+                            </svg>
+                            Back
+                        </button>
+                        <div class="brand">
+                            <div class="brand-icon">📄</div>
+                            <span class="brand-name">Resume Improver</span>
+                        </div>
+                    </div>
+                </header>
+                
+                <main class="upload-section">
+                    <h2 class="section-title">Upload Your Resume</h2>
+                    
+                    <div class="toggle-container">
+                        <button class="toggle-btn active" data-mode="upload" onclick="setUploadMode('upload')">
+                            Upload File
+                        </button>
+                        <button class="toggle-btn" data-mode="paste" onclick="setUploadMode('paste')">
+                            Paste Text
+                        </button>
+                    </div>
+                    
+                    <!-- File Upload Mode -->
+                    <div id="upload-mode" class="input-mode active">
+                        <div class="upload-zone" id="upload-zone">
+                            <svg class="upload-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <p class="upload-text">Drag & drop your resume here</p>
+                            <p class="upload-subtext">or click to browse</p>
+                            <p class="upload-formats">Supports PDF and DOCX</p>
+                            <input type="file" id="file-input" accept=".pdf,.docx" hidden>
+                        </div>
+                        <div id="file-info" class="file-info hidden">
+                            <div class="file-name"></div>
+                            <button class="btn btn-clear" onclick="clearFile()">Clear</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Paste Mode -->
+                    <div id="paste-mode" class="input-mode">
+                        <textarea 
+                            id="resume-text" 
+                            class="text-area" 
+                            placeholder="Paste your resume text here..."
+                            rows="15"
+                        ></textarea>
+                    </div>
+                    
+                    <div class="api-key-section">
+                        <label for="api-key" class="api-key-label">Groq API Key</label>
+                        <input 
+                            type="password" 
+                            id="api-key" 
+                            class="api-key-input" 
+                            placeholder="gsk_..."
+                        >
+                        <p class="api-key-hint">Your API key is only used for this session and never stored</p>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-large" onclick="analyzeResume()">
+                        Analyze Resume
+                    </button>
+                    
+                    <div id="error-message" class="error-message hidden"></div>
+                </main>
+            </div>
+        </div>
+
+        <!-- Results Page -->
+        <div id="results-page" class="page">
+            <div class="container">
+                <header class="app-header">
+                    <div class="header-inner">
+                        <button class="btn btn-back" onclick="showUploadPage()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="19" y1="12" x2="5" y2="12"/>
+                                <polyline points="12 19 5 12 12 5"/>
+                            </svg>
+                            Back
+                        </button>
+                        <div class="brand">
+                            <div class="brand-icon">📄</div>
+                            <span class="brand-name">Resume Improver</span>
+                        </div>
+                    </div>
+                </header>
+                
+                <main class="results-section">
+                    <div id="loading-state" class="loading-state hidden">
+                        <div class="loading-spinner"></div>
+                        <p class="loading-text">Analyzing your resume...</p>
+                    </div>
+                    
+                    <div id="results-content" class="results-content hidden">
+                        <div class="score-section">
+                            <div class="score-card">
+                                <div class="score-number" id="score-number">0</div>
+                                <div class="score-label">Overall Score</div>
+                            </div>
+                            <div class="summary-card">
+                                <h3>Summary</h3>
+                                <p id="summary-text"></p>
+                            </div>
+                        </div>
+                        
+                        <div class="results-actions">
+                            <button class="btn btn-secondary" onclick="toggleOriginal()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <span id="toggle-text">Show Original</span>
+                            </button>
+                            <button class="btn btn-primary" onclick="copyImproved()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                                Copy Improved Resume
+                            </button>
+                        </div>
+                        
+                        <div class="feedback-sections">
+                            <div class="feedback-card">
+                                <div class="feedback-header">
+                                    <div class="feedback-icon">👤</div>
+                                    <h3>Header / Contact Info</h3>
+                                </div>
+                                <div class="feedback-content" id="header-feedback"></div>
+                            </div>
+                            
+                            <div class="feedback-card">
+                                <div class="feedback-header">
+                                    <div class="feedback-icon">📝</div>
+                                    <h3>Summary / Objective</h3>
+                                </div>
+                                <div class="feedback-content" id="summary-feedback"></div>
+                            </div>
+                            
+                            <div class="feedback-card">
+                                <div class="feedback-header">
+                                    <div class="feedback-icon">💼</div>
+                                    <h3>Experience</h3>
+                                </div>
+                                <div class="feedback-content" id="experience-feedback"></div>
+                            </div>
+                            
+                            <div class="feedback-card">
+                                <div class="feedback-header">
+                                    <div class="feedback-icon">🚀</div>
+                                    <h3>Projects</h3>
+                                </div>
+                                <div class="feedback-content" id="projects-feedback"></div>
+                            </div>
+                            
+                            <div class="feedback-card">
+                                <div class="feedback-header">
+                                    <div class="feedback-icon">🛠️</div>
+                                    <h3>Skills</h3>
+                                </div>
+                                <div class="feedback-content" id="skills-feedback"></div>
+                            </div>
+                            
+                            <div class="feedback-card">
+                                <div class="feedback-header">
+                                    <div class="feedback-icon">🎓</div>
+                                    <h3>Education</h3>
+                                </div>
+                                <div class="feedback-content" id="education-feedback"></div>
+                            </div>
+                            
+                            <div class="feedback-card">
+                                <div class="feedback-header">
+                                    <div class="feedback-icon">✨</div>
+                                    <h3>Bullet-level Improvements</h3>
+                                </div>
+                                <div class="feedback-content" id="bullet-feedback"></div>
+                            </div>
+                            
+                            <div class="feedback-card">
+                                <div class="feedback-header">
+                                    <div class="feedback-icon">🔑</div>
+                                    <h3>Missing Keywords (ATS)</h3>
+                                </div>
+                                <div class="feedback-content" id="keywords-feedback"></div>
+                            </div>
+                            
+                            <div class="feedback-card">
+                                <div class="feedback-header">
+                                    <div class="feedback-icon">🎨</div>
+                                    <h3>Tone & Impact Suggestions</h3>
+                                </div>
+                                <div class="feedback-content" id="tone-feedback"></div>
+                            </div>
+                            
+                            <div class="feedback-card">
+                                <div class="feedback-header">
+                                    <div class="feedback-icon">✏️</div>
+                                    <h3>Grammar / Clarity Fixes</h3>
+                                </div>
+                                <div class="feedback-content" id="grammar-feedback"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="rewrite-section">
+                            <h3>Generate Improved Resume</h3>
+                            <button class="btn btn-primary" onclick="generateFullRewrite()">
+                                Generate Full Rewrite
+                            </button>
+                            <div id="rewrite-content" class="rewrite-content hidden"></div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
